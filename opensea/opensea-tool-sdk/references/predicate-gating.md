@@ -38,7 +38,6 @@ Agent                        Tool Server                   ToolRegistry (onchain
 8. If access is denied: return 403 with predicate address for self-diagnosis
 9. If predicate misbehaved: return 502
 
-> **Backward compatibility:** The gate still accepts `Authorization: EIP-3009 <base64url(json)>` and deprecated `Authorization: SIWE <token>` headers. However, the 402 + `X-Payment` flow is preferred for new integrations because it mirrors the x402 pattern and lets the client discover the correct `to` address from the challenge.
 
 ## Build a predicate-gated tool (server side)
 
@@ -74,6 +73,7 @@ export const toolHandler = createToolHandler({
   gates: [
     predicateGate({
       toolId: 1n,  // your onchain tool ID from registration
+      operatorAddress: "0xYOUR_OPERATOR_ADDRESS",  // receives the zero-value authorization
       // chain: base,
       // rpcUrl: "https://mainnet.base.org",
     }),
@@ -91,7 +91,7 @@ export const toolHandler = createToolHandler({
 
 ```bash
 PRIVATE_KEY=0x... RPC_URL=https://mainnet.base.org \
-  npx @opensea/tool-sdk@0.25.0 auth \
+  npx @opensea/tool-sdk@0.26.0 auth \
   https://my-tool.example.com/api \
   --body '{"query": "hello"}'
 ```
@@ -269,7 +269,7 @@ const res = await paidAuthenticatedFetch("https://my-tool.example.com/api", {
 
 ```bash
 PRIVATE_KEY=0x... RPC_URL=https://mainnet.base.org \
-  npx @opensea/tool-sdk@0.25.0 smoke \
+  npx @opensea/tool-sdk@0.26.0 smoke \
   --endpoint https://my-tool.example.com/api \
   --expect 200
 ```
